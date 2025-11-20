@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max Florian | Full Stack Developer</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Configuración de Tailwind y Estilos CSS extra -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: 'var(--bg-color)',
+                        card: 'var(--card-bg)',
+                        primary: '#00d4ff', // Cian eléctrico
+                        secondary: '#7000ff', // Violeta
+                        'text-main': 'var(--text-main)',
+                        'text-muted': 'var(--text-muted)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* --- VARIABLES DE TEMA --- */
+        :root {
+            /* Tema Oscuro (Por defecto) */
+            --bg-color: #050505;
+            --card-bg: rgba(23, 23, 23, 0.8);
+            --nav-bg: rgba(5, 5, 5, 0.85);
+            --text-main: #e5e5e5;
+            --text-muted: #9ca3af; /* Gray 400 */
+            --border-color: rgba(255, 255, 255, 0.1);
+            --neon-off: #333;
+        }
+
+        html.light {
+            /* Tema Claro */
+            --bg-color: #f3f4f6; /* Gray 100 */
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #111827; /* Gray 900 */
+            --text-muted: #4b5563; /* Gray 600 */
+            --border-color: rgba(0, 0, 0, 0.1);
+            --neon-off: #d1d5db;
+        }
+
+        /* Estilos Base */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .text-adaptive {
+            color: var(--text-main);
+            transition: color 0.3s ease;
+        }
+        .text-muted-adaptive {
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #00d4ff, #7000ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        html.light ::-webkit-scrollbar-thumb {
+            background: #ccc;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00d4ff;
+        }
+
+        /* Animaciones */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .nav-glass {
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Marco de Neón */
+        .neon-frame {
+            border: 3px solid var(--neon-off);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease-in-out;
+            filter: grayscale(0%); 
+        }
+
+        .neon-frame:hover {
+            border-color: #00d4ff;
+            box-shadow: 
+                0 0 10px #00d4ff,
+                0 0 20px #00d4ff,
+                0 0 40px #00d4ff,
+                0 0 80px rgba(0, 212, 255, 0.6);
+            transform: scale(1.02);
+        }
+
+        /* Floating Theme Toggle */
+        .floating-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            cursor: pointer;
+            
+            /* Glass effect matching other elements */
+            background: var(--card-bg);
+            /* Corregido: Usar el color hex directo o definir la variable, aquí uso el hex directo de primary */
+            border: 1px solid #00d4ff; 
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+            
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .floating-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            /* Corregido: Especificamos el color #00d4ff directamente para asegurar que el fondo se pinte */
+            background: #00d4ff; 
+            color: #000;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 nav-glass top-0 left-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 font-bold text-2xl tracking-tighter">
+                    <span class="text-adaptive">&lt;</span>
+                    <span class="text-primary">Max</span>
+                    <span class="text-adaptive">/&gt;</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="text-adaptive hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#projects" class="text-adaptive hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+                        <a href="#experience" class="text-adaptive hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Experience</a>
+                        <a href="#skills" class="text-adaptive hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Skills</a>
+                        <a href="#certifications" class="text-adaptive hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Certificates</a>
+                    </div>
+                    
+                    <!-- Contact Button -->
+                    <div class="ml-6">
+                        <a href="#contact" class="bg-primary text-black hover:bg-cyan-400 px-4 py-2 rounded-full text-sm font-bold transition-all transform hover:scale-105">Contact Me</a>
+                    </div>
+                </div>
+
+                <!-- Mobile controls -->
+                <div class="md:hidden flex items-center gap-4">
+                    <button id="mobile-menu-btn" class="text-adaptive hover:text-primary focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-card border-t border-[var(--border-color)]">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-adaptive hover:text-primary hover:bg-white/5">Home</a>
+                <a href="#projects" class="block px-3 py-2 rounded-md text-base font-medium text-adaptive hover:text-primary hover:bg-white/5">Projects</a>
+                <a href="#experience" class="block px-3 py-2 rounded-md text-base font-medium text-adaptive hover:text-primary hover:bg-white/5">Experience</a>
+                <a href="#skills" class="block px-3 py-2 rounded-md text-base font-medium text-adaptive hover:text-primary hover:bg-white/5">Skills</a>
+                <a href="#certifications" class="block px-3 py-2 rounded-md text-base font-medium text-adaptive hover:text-primary hover:bg-white/5">Certificates</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-primary font-bold hover:bg-white/5">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <!-- CAMBIO: Aumentado padding top en móvil (pt-28) para separar la foto de la navbar -->
+    <section id="home" class="min-h-screen flex flex-col justify-center pt-20 md:pt-16 relative overflow-hidden">
+        <div class="absolute top-20 left-0 w-72 h-72 bg-primary opacity-10 rounded-full blur-3xl filter"></div>
+        <div class="absolute bottom-20 right-0 w-96 h-96 bg-secondary opacity-10 rounded-full blur-3xl filter"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
+            
+            <!-- BLOQUE 1: Texto y Foto (Alineados verticalmente al centro entre sí) -->
+            <!-- CAMBIO: Reducido gap en móvil (gap-4) para acercar el texto a la foto, manteniendo gap-12 en escritorio -->
+            <div class="flex flex-col-reverse md:flex-row items-center gap-4 md:gap-12">
+                
+                <!-- Columna Izquierda: Solo Títulos y Descripción -->
+                <!-- CAMBIO: Eliminado 'mt-8' para quitar el exceso de espacio entre foto y texto en móvil -->
+                <div class="w-full md:w-1/2 text-center md:text-left md:mt-0 fade-in-section">
+                    <!-- CAMBIO: Tamaños aumentados (md:text-base lg:text-lg) -->
+                    <h2 class="text-primary font-semibold tracking-wide uppercase text-sm md:text-base lg:text-lg mb-2">Science and Systems Engineer</h2>
+                    <!-- CAMBIO: Tamaño aumentado a 8xl en pantallas grandes (lg:text-8xl) -->
+                    <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-4 leading-tight text-adaptive">
+                        Hello, I'm <br>
+                        <span class="text-gradient">Max Florian</span>
+                    </h1>
+                    <!-- CAMBIO: Tamaño aumentado a 2xl en pantallas grandes (lg:text-2xl) -->
+                    <p class="text-muted-adaptive text-lg md:text-xl lg:text-2xl max-w-lg mx-auto md:mx-0 leading-relaxed">
+                        Full Stack Developer based in Guatemala. Specialized in Node.js, React, and Database Administration. I build robust web applications and optimize large-scale database environments.
+                    </p>
+                </div>
+
+                <!-- Columna Derecha: Foto (Se centra respecto al texto de la izquierda) -->
+                <div class="w-full md:w-1/2 flex justify-center fade-in-section">
+                    <div class="relative w-64 h-64 md:w-80 md:h-80">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="Max Florian" 
+                             class="w-full h-full object-cover rounded-xl neon-frame">
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOQUE 2: Botones (Separados para no afectar la alineación) -->
+            <!-- Mantenemos el ancho md:w-1/2 para que se alinee visualmente debajo del texto -->
+            <div class="w-full md:w-1/2 mt-8 fade-in-section">
+                <div class="flex justify-center md:justify-start items-center space-x-4">
+                    <a href="#projects" class="border border-primary text-primary hover:bg-primary hover:text-black px-6 py-3 rounded-md font-semibold transition-all">
+                        View Projects
+                    </a>
+                    <a href="https://github.com/max-florian" target="_blank" class="text-muted-adaptive hover:text-adaptive text-3xl transition-colors"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/max-florian/" target="_blank" class="text-muted-adaptive hover:text-adaptive text-3xl transition-colors"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-section">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-adaptive">My <span class="text-gradient">Projects</span></h2>
+                <div class="w-20 h-1 bg-primary mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Project 1: ERP -->
+                <article class="glass rounded-xl overflow-hidden hover:-translate-y-2 transition-transform duration-300 fade-in-section">
+                    <div class="h-48 bg-gray-800 overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="ERP System" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                            <a href="https://cdd.akisi.com" target="_blank" class="text-white border border-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors text-sm">Visit Site</a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-adaptive">"Cajas de Desarrollo" ERP</h3>
+                        <p class="text-muted-adaptive text-sm mb-4">Complete ERP system featuring payment processing, user administration, and graphical data visualization.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">React/Next.js</span>
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">Node.js</span>
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">TypeScript</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Project 2: Cosmic Chase -->
+                <article class="glass rounded-xl overflow-hidden hover:-translate-y-2 transition-transform duration-300 fade-in-section">
+                    <div class="h-48 bg-gray-800 overflow-hidden relative group">
+                        <!-- CAMBIO: Imagen actualizada a una temática Arcade/Retro Gaming -->
+                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cosmic Chase" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                            <a href="https://linktr.ee/cosmicchase" target="_blank" class="text-white border border-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors text-sm">Download</a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-adaptive">Cosmic Chase</h3>
+                        <p class="text-muted-adaptive text-sm mb-4">Endless space solo mobile game about escaping from aliens.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">Unity</span>
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">C#</span>
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">Mobile</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Project 3: NFT Marketplace -->
+                <article class="glass rounded-xl overflow-hidden hover:-translate-y-2 transition-transform duration-300 fade-in-section">
+                    <div class="h-48 bg-gray-800 overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="NFT Marketplace" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                            <a href="https://eneftis.netlify.app" target="_blank" class="text-white border border-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors text-sm">View App</a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-adaptive">Eneftis Marketplace</h3>
+                        <p class="text-muted-adaptive text-sm mb-4">Marketplace for minting digital art on the Rinkeby test network using Smart Contracts.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">React</span>
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">Solidity</span>
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">Web3</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Project 4: Chrome Extension -->
+                <article class="glass rounded-xl overflow-hidden hover:-translate-y-2 transition-transform duration-300 fade-in-section">
+                    <div class="h-48 bg-gray-800 overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Chrome Extension" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                            <a href="https://chrome.google.com/webstore/detail/ibai-te-ayuda-a-estudiar/gpfcnnilcblkdfjdjlgnclllbbhbeijb?hl=es&authuser=0" target="_blank" class="text-white border border-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors text-sm">View Store</a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-adaptive">Study Helper Extension</h3>
+                        <p class="text-muted-adaptive text-sm mb-4">Chrome extension that helps users concentrate by eliminating distractions.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">JavaScript</span>
+                            <span class="text-xs bg-black/20 dark:bg-gray-800 text-primary px-2 py-1 rounded">HTML/CSS</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="py-20 bg-dark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-section">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-adaptive">Work <span class="text-gradient">Experience</span></h2>
+                <div class="w-20 h-1 bg-secondary mx-auto rounded-full"></div>
+            </div>
+
+            <div class="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-700 before:to-transparent">
+                
+                <!-- Experience 1: FUNTEC -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-in-section">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-700 bg-gray-900 group-hover:border-primary group-hover:bg-primary group-hover:text-black shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 transition-colors z-10">
+                        <i class="fas fa-code text-sm text-white"></i>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass p-6 rounded-xl">
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="font-bold text-adaptive">FullStack Developer</h3>
+                            <span class="text-xs text-primary font-mono border border-primary/30 px-2 py-1 rounded">Sep 2023 - Present</span>
+                        </div>
+                        <div class="text-sm text-muted-adaptive mb-2">FUNTEC</div>
+                        <p class="text-muted-adaptive text-sm">Developing internal web apps using Node.js, Express, and React. Building RESTful APIs and implementing containerization with Docker.</p>
+                    </div>
+                </div>
+
+                <!-- Experience 2: Grupo Hame -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-in-section">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-700 bg-gray-900 group-hover:border-secondary group-hover:bg-secondary group-hover:text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 transition-colors z-10">
+                        <i class="fas fa-database text-sm text-white"></i>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass p-6 rounded-xl">
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="font-bold text-adaptive">Database Administrator</h3>
+                            <span class="text-xs text-secondary font-mono border border-secondary/30 px-2 py-1 rounded">May 2022 - Sep 2023</span>
+                        </div>
+                        <div class="text-sm text-muted-adaptive mb-2">Grupo Hame</div>
+                        <p class="text-muted-adaptive text-sm">Managed large-scale SQL Server environments. Resolved performance issues, deadlocks, and executed schema changes under Change Management.</p>
+                    </div>
+                </div>
+
+                <!-- Experience 3: Datum S.A. -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-in-section">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-700 bg-gray-900 group-hover:border-secondary group-hover:bg-secondary group-hover:text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 transition-colors z-10">
+                        <i class="fas fa-server text-sm text-white"></i>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass p-6 rounded-xl">
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="font-bold text-adaptive">Database Administrator</h3>
+                            <span class="text-xs text-secondary font-mono border border-secondary/30 px-2 py-1 rounded">Mar 2021 - Mar 2022</span>
+                        </div>
+                        <div class="text-sm text-muted-adaptive mb-2">Datum S.A.</div>
+                        <p class="text-muted-adaptive text-sm">Administered SQL Server and Oracle across hybrid clouds (AWS, GCP). Implemented automation scripts for monitoring and patching.</p>
+                    </div>
+                </div>
+
+                 <!-- Experience 4: AI Class Assistant -->
+                 <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-in-section">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-700 bg-gray-900 group-hover:border-primary group-hover:bg-primary group-hover:text-black shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 transition-colors z-10">
+                        <i class="fas fa-chalkboard-teacher text-sm text-white"></i>
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass p-6 rounded-xl">
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="font-bold text-adaptive">Artificial Intelligence Class Assistant</h3>
+                            <span class="text-xs text-primary font-mono border border-primary/30 px-2 py-1 rounded">Jan 2021 - Dec 2021</span>
+                        </div>
+                        <div class="text-sm text-muted-adaptive mb-2">Universidad de San Carlos de Guatemala</div>
+                        <p class="text-muted-adaptive text-sm">Reinforced student learning in topics like RPA, Logic Programming, and Augmented Reality. Created interactive examples using UiPath, GNU Prolog, Unity, and Vuforia, while grading assignments and documenting class projects.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-section">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-adaptive">Tech <span class="text-gradient">Stack</span></h2>
+                <p class="text-muted-adaptive">Tools and languages I use daily</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Frontend -->
+                <div class="glass p-6 rounded-xl fade-in-section">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-adaptive"><i class="fas fa-desktop text-primary"></i> Frontend</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1"><span class="text-sm text-adaptive">React / Next.js</span><span class="text-sm text-muted-adaptive">90%</span></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-primary h-2 rounded-full" style="width: 90%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1"><span class="text-sm text-adaptive">JavaScript / TypeScript</span><span class="text-sm text-muted-adaptive">95%</span></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-primary h-2 rounded-full" style="width: 95%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1"><span class="text-sm text-adaptive">Tailwind / CSS</span><span class="text-sm text-muted-adaptive">90%</span></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-primary h-2 rounded-full" style="width: 90%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backend -->
+                <div class="glass p-6 rounded-xl fade-in-section">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-adaptive"><i class="fas fa-server text-secondary"></i> Backend</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1"><span class="text-sm text-adaptive">Node.js / Express</span><span class="text-sm text-muted-adaptive">90%</span></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-secondary h-2 rounded-full" style="width: 90%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1"><span class="text-sm text-adaptive">Solidity (Smart Contracts)</span><span class="text-sm text-muted-adaptive">75%</span></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-secondary h-2 rounded-full" style="width: 75%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1"><span class="text-sm text-adaptive">RESTful APIs</span><span class="text-sm text-muted-adaptive">95%</span></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-secondary h-2 rounded-full" style="width: 95%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RDBMS -->
+                <div class="glass p-6 rounded-xl fade-in-section">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-adaptive"><i class="fas fa-database text-yellow-400"></i> RDBMS</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1"><span class="text-sm text-adaptive">SQL Server</span><span class="text-sm text-muted-adaptive">95%</span></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-yellow-400 h-2 rounded-full" style="width: 95%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1"><span class="text-sm text-adaptive">Oracle</span><span class="text-sm text-muted-adaptive">85%</span></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-yellow-400 h-2 rounded-full" style="width: 85%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1"><span class="text-sm text-adaptive">MySQL</span><span class="text-sm text-muted-adaptive">80%</span></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2"><div class="bg-yellow-400 h-2 rounded-full" style="width: 80%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools -->
+                <div class="glass p-6 rounded-xl fade-in-section">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-adaptive"><i class="fas fa-tools text-green-400"></i> Tools & Cloud</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-black/20 dark:bg-gray-800 rounded-full text-sm border border-gray-700 text-adaptive">Git / GitHub</span>
+                        <span class="px-3 py-1 bg-black/20 dark:bg-gray-800 rounded-full text-sm border border-gray-700 text-adaptive">Docker</span>
+                        <span class="px-3 py-1 bg-black/20 dark:bg-gray-800 rounded-full text-sm border border-gray-700 text-adaptive">AWS / GCP / Azure</span>
+                        <span class="px-3 py-1 bg-black/20 dark:bg-gray-800 rounded-full text-sm border border-gray-700 text-adaptive">Linux</span>
+                        <span class="px-3 py-1 bg-black/20 dark:bg-gray-800 rounded-full text-sm border border-gray-700 text-adaptive">Scrum</span>
+                        <span class="px-3 py-1 bg-black/20 dark:bg-gray-800 rounded-full text-sm border border-gray-700 text-adaptive">Windows Scripting</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section id="certifications" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-section">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-adaptive">Certifications</h2>
+                <div class="w-20 h-1 bg-primary mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cert 1 -->
+                <div class="glass p-6 rounded-xl text-center hover:border-primary transition-colors duration-300 fade-in-section">
+                    <i class="fas fa-cloud text-4xl text-red-500 mb-4"></i>
+                    <h3 class="font-bold mb-2 text-adaptive">Oracle Cloud Infrastructure</h3>
+                    <p class="text-xs text-muted-adaptive mb-2">2021 Architect Associate</p>
+                    <p class="text-xs text-gray-500">Oracle</p>
+                </div>
+                <!-- Cert 2 -->
+                <div class="glass p-6 rounded-xl text-center hover:border-white transition-colors duration-300 fade-in-section">
+                    <i class="fab fa-github text-4xl text-white mb-4"></i>
+                    <h3 class="font-bold mb-2 text-adaptive">GitHub Foundations</h3>
+                    <p class="text-xs text-muted-adaptive mb-2">GitHub Inc.</p>
+                </div>
+                <!-- Cert 3 -->
+                <div class="glass p-6 rounded-xl text-center hover:border-blue-500 transition-colors duration-300 fade-in-section">
+                    <i class="fab fa-docker text-4xl text-blue-500 mb-4"></i>
+                    <h3 class="font-bold mb-2 text-adaptive">Docker Basics</h3>
+                    <p class="text-xs text-muted-adaptive mb-2">LaserAnts</p>
+                </div>
+                <!-- Cert 4 -->
+                <div class="glass p-6 rounded-xl text-center hover:border-green-500 transition-colors duration-300 fade-in-section">
+                    <i class="fab fa-node-js text-4xl text-green-500 mb-4"></i>
+                    <h3 class="font-bold mb-2 text-adaptive">Backend with Node.js</h3>
+                    <p class="text-xs text-muted-adaptive mb-2">IBM</p>
+                </div>
+                 <!-- Cert 5 -->
+                 <div class="glass p-6 rounded-xl text-center hover:border-blue-400 transition-colors duration-300 fade-in-section">
+                    <i class="fab fa-google text-4xl text-blue-400 mb-4"></i>
+                    <h3 class="font-bold mb-2 text-adaptive">Google AI Essentials</h3>
+                    <p class="text-xs text-muted-adaptive mb-2">Google</p>
+                </div>
+                 <!-- Cert 6 -->
+                 <div class="glass p-6 rounded-xl text-center hover:border-purple-500 transition-colors duration-300 fade-in-section">
+                    <i class="fas fa-gem text-4xl text-purple-500 mb-4"></i>
+                    <h3 class="font-bold mb-2 text-adaptive">Gemini for App Developers</h3>
+                    <p class="text-xs text-muted-adaptive mb-2">Google</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-dark relative overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary opacity-5 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 fade-in-section">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-adaptive">Let's Talk</h2>
+                <p class="text-muted-adaptive">I'm available for freelance projects or full-time opportunities.</p>
+            </div>
+
+            <div class="glass p-12 md:p-20 rounded-2xl border border-[var(--border-color)] text-center">
+                <div class="flex flex-col md:flex-row justify-center items-center gap-12 md:gap-24">
+                    
+                    <!-- Email -->
+                    <a href="mailto:maxgt734@gmail.com" class="group flex flex-col items-center transition-transform hover:-translate-y-2">
+                        <div class="w-24 h-24 bg-black/40 rounded-full flex items-center justify-center border border-gray-700 group-hover:border-white group-hover:bg-gray-800 transition-colors mb-4 shadow-lg shadow-primary/10">
+                            <i class="fas fa-envelope text-4xl md:text-5xl text-gray-300 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-adaptive group-hover:text-primary transition-colors">Email</h3>
+                        <span class="text-sm text-muted-adaptive group-hover:text-adaptive">maxgt734@gmail.com</span>
+                    </a>
+
+                    <!-- LinkedIn -->
+                    <a href="https://www.linkedin.com/in/max-florian/" target="_blank" class="group flex flex-col items-center transition-transform hover:-translate-y-2">
+                        <div class="w-24 h-24 bg-black/40 rounded-full flex items-center justify-center border border-gray-700 group-hover:border-primary group-hover:bg-gray-800 transition-colors mb-4 shadow-lg shadow-primary/10">
+                            <i class="fab fa-linkedin text-4xl md:text-5xl text-gray-300 group-hover:text-primary transition-colors"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-adaptive group-hover:text-primary transition-colors">LinkedIn</h3>
+                        <span class="text-sm text-muted-adaptive group-hover:text-adaptive">/max-florian</span>
+                    </a>
+
+                    <!-- GitHub -->
+                    <a href="https://github.com/max-florian" target="_blank" class="group flex flex-col items-center transition-transform hover:-translate-y-2">
+                        <div class="w-24 h-24 bg-black/40 rounded-full flex items-center justify-center border border-gray-700 group-hover:border-white group-hover:bg-gray-800 transition-colors mb-4 shadow-lg shadow-primary/10">
+                            <i class="fab fa-github text-4xl md:text-5xl text-gray-300 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-adaptive group-hover:text-primary transition-colors">GitHub</h3>
+                        <span class="text-sm text-muted-adaptive group-hover:text-adaptive">/max-florian</span>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Theme Toggle Button -->
+    <button id="theme-toggle-floating" class="floating-toggle" aria-label="Toggle Theme">
+        <i class="fas fa-sun hidden" id="icon-sun"></i>
+        <i class="fas fa-moon" id="icon-moon"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--bg-color)] py-8 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-muted-adaptive text-sm">&copy; 2023 Max Florian. Made with <i class="fas fa-heart text-red-500 mx-1"></i> and a lot of code.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts de Funcionalidad -->
+    <script>
+        // Referencias a elementos
+        const html = document.documentElement;
+        const toggleBtn = document.getElementById('theme-toggle-floating');
+        const sunIcon = document.getElementById('icon-sun');
+        const moonIcon = document.getElementById('icon-moon');
+
+        // Función para aplicar tema
+        function applyTheme(isLight) {
+            if (isLight) {
+                html.classList.add('light');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                html.classList.remove('light');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        // Cargar preferencia inicial
+        const savedTheme = localStorage.getItem('theme');
+        
+        // CAMBIO AQUÍ: Eliminamos la comprobación del sistema (isSystemLight).
+        // Ahora, por defecto es oscuro (false) a menos que 'savedTheme' sea explícitamente 'light'.
+        const isLight = savedTheme === 'light';
+        
+        applyTheme(isLight);
+
+        // Event Listener para el botón
+        toggleBtn.addEventListener('click', () => {
+            const isLightNow = html.classList.contains('light');
+            // Alternar
+            applyTheme(!isLightNow);
+            // Guardar
+            localStorage.setItem('theme', !isLightNow ? 'light' : 'dark');
+        });
+
+
+        // Menu Móvil Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Cerrar menú móvil al hacer click en un enlace
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Animación de aparición al hacer scroll (Intersection Observer)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); // Solo animar una vez
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Efecto de header activo al hacer scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-lg');
+            } else {
+                nav.classList.remove('shadow-lg');
+            }
+        });
+    </script>
+</body>
+</html>
